@@ -1,5 +1,4 @@
 import json
-
 import mlflow
 import tempfile
 import os
@@ -45,15 +44,23 @@ def go(config: DictConfig):
                     "sample": config["etl"]["sample"],
                     "artifact_name": "sample.csv",
                     "artifact_type": "raw_data",
-                    "artifact_description": "Raw file as downloaded"
+                    "artifact_description": 'Rawfileasdownloaded'
                 },
             )
 
         if "basic_cleaning" in active_steps:
-            ##################
-            # Implement here #
-            ##################
-            pass
+            _ = mlflow.run(
+                 os.path.join(hydra.utils.get_original_cwd(), "src", "basic_cleaning"),
+                 "main",
+                 parameters={
+                     "input_artifact": "sample.csv:latest",
+                     "output_artifact": "clean_sample.csv",
+                     "output_type": "clean_sample",
+                     "output_description": "Data_with_outliers_and_null_values_removed",
+                     "min_price": config['etl']['min_price'],
+                     "max_price": config['etl']['max_price']
+                 },
+             )
 
         if "data_check" in active_steps:
             ##################
