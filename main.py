@@ -63,10 +63,15 @@ def go(config: DictConfig):
              )
 
         if "data_check" in active_steps:
-            ##################
-            # Implement here #
-            ##################
-            pass
+            _ = mlflow.run(
+                 os.path.join(hydra.utils.get_original_cwd(), "src", "data_check"),
+                 "main",
+                 parameters={
+                     "reference_artifact": "clean_sample.csv:reference",
+                     "sample_artifact": "preprocessed_data.csv:latest",
+                     "kl_threshold": config["data_check"]["kl_threshold"]
+                 },
+             )
 
         if "data_split" in active_steps:
             ##################
